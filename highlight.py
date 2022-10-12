@@ -9,28 +9,7 @@ import html_defs
 
 DEBUG = False
 
-START_TAG = "<"
-END_TAG = ">"
 
-_PAIRS = {
-    START_TAG : END_TAG,
-    "'" : "'",
-    '"' : '"',
-}
-
-_SINGLE = set(["="," ", "/"])
-
-
-_HTMLSAFE = {
-    '<' : '&lt;',
-    '>' : '&gt;',
-    '&' : '&amp;',
-    "'" : "'", # need to locate safe entry for single quote
-    '"' : '&quot;',
-}
-
-
-# load in data
 def load_code(code_file: str):
     '''Loads a code file'''
     lines = list()  # holds all the lines
@@ -43,7 +22,6 @@ def load_code(code_file: str):
     return lines
 
 
-# run tokenizer
 def tokenizer(lines: list):
     '''Takes in a list of lines : str, returns a list of line tokens'''
     tokens = []  # will hold the line_tokens
@@ -58,14 +36,14 @@ def tokenizer(lines: list):
                 line_tokens.append(c)
                 matched_command.pop()
                 working = ""
-            elif c in _SINGLE or c in _PAIRS.keys():
+            elif c in html_defs._SINGLE or c in html_defs._PAIRS.keys():
                 if working:
                     line_tokens.append(working)
                 working = ""
                 line_tokens.append(c)
 
-                if c in _PAIRS.keys():
-                    matched_command.push(_PAIRS[c])
+                if c in html_defs._PAIRS.keys():
+                    matched_command.push(html_defs._PAIRS[c])
             else:
                 working += c
 
@@ -81,6 +59,7 @@ def tokenizer(lines: list):
 
     return tokens
 
+
 def label(substring : str, type : str):
     """ Wraps the substring in an html span of class <type>"""
     return f"<span class='{type}'>{substring}</span>"
@@ -94,12 +73,10 @@ def process(token_lines):
 
 def get_safe_html_char(token):
     """Returns a safe dict"""
-    if token in _HTMLSAFE:
-        return _HTMLSAFE[token]
+    if token in html_defs._HTMLSAFE:
+        return html_defs._HTMLSAFE[token]
     else:
         return token
-
-
 
 
 def program(file_name):
@@ -114,7 +91,6 @@ def program(file_name):
             print(f"tokens: {line}")
             print(F"joined: {''.join(line)}")
             print()
-
 
 
     parsed = process(tokens)
