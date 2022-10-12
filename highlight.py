@@ -67,8 +67,14 @@ def label(substring : str, type : str):
 
 def process(token_lines):
     """Takes a line of tokens, returns parsed html"""
+    p_lines = []
     for line in token_lines:
-        parse.parse_line(line)
+        p_lines.append(parse.parse_line(line))
+
+    for line in p_lines:
+        for entry in line:
+            print(f"{entry.token_type:2} : '{entry.token}'")
+        print()
 
 
 def get_safe_html_char(token):
@@ -84,7 +90,7 @@ def program(file_name):
 
     tokens = tokenizer(lines)
 
-    print(f"tokens {tokens}")
+    #print(f"tokens {tokens}")
 
     if DEBUG:
         for line in tokens:
