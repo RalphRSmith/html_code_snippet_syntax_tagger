@@ -4,21 +4,29 @@ input: a file containing properly formatted html
 output: a file with css tags added
 '''
 import d_stack
+import parse
+import html_defs
+
 DEBUG = False
 
+START_TAG = "<"
+END_TAG = ">"
 
 _PAIRS = {
-    '<' : '>',
+    START_TAG : END_TAG,
+    "'" : "'",
     '"' : '"',
 }
 
-
-_SINGLE = set(["="," "])
+_SINGLE = set(["="," ", "/"])
 
 
 _HTMLSAFE = {
-    '<' : "&lt",
-    '>' : "&gt",
+    '<' : '&lt;',
+    '>' : '&gt;',
+    '&' : '&amp;',
+    "'" : "'", # need to locate safe entry for single quote
+    '"' : '&quot;',
 }
 
 
@@ -45,7 +53,8 @@ def tokenizer(lines: list):
         working = ""
         for j, c in enumerate(line):
             if c == matched_command.top():
-                line_tokens.append(working)
+                if working:
+                    line_tokens.append(working)
                 line_tokens.append(c)
                 matched_command.pop()
                 working = ""
@@ -72,18 +81,45 @@ def tokenizer(lines: list):
 
     return tokens
 
+def label(substring : str, type : str):
+    """ Wraps the substring in an html span of class <type>"""
+    return f"<span class='{type}'>{substring}</span>"
+
+
+def process(token_lines):
+    """Takes a line of tokens, returns parsed html"""
+    for line in token_lines:
+        parse.parse_line(line)
+
+
+def get_safe_html_char(token):
+    """Returns a safe dict"""
+    if token in _HTMLSAFE:
+        return _HTMLSAFE[token]
+    else:
+        return token
 
 
 
 
 def program(file_name):
     lines = load_code(file_name)
+
     tokens = tokenizer(lines)
 
-    for line in tokens:
-        print(f"tokens: {line}")
-        print(F"joined: {''.join(line)}")
-        print()
+    print(f"tokens {tokens}")
+
+    if DEBUG:
+        for line in tokens:
+            print(f"tokens: {line}")
+            print(F"joined: {''.join(line)}")
+            print()
+
+
+
+    parsed = process(tokens)
+
+
 
 
 def main():
@@ -93,5 +129,32 @@ def main():
 
 
 
+def run_tests():
+    """Test runner for highlight module"""
+
+    PASSED = "passed"
+    FAILED = "*** failed ***"
+
+    # define tests
+    def test_label():
+        s = "abcd"
+        t = "name"
+
+        try:
+            r = label(s, t)
+            assert(r == f"<span class='{t}'>{s}</span>")
+            print(PASSED)
+        except assertionError:
+            print(FAILED)
+
+    # invoke tests
+    print("Running tests")
+    print("-" * 13)
+    tests = [test_label]
+    for test in tests:
+        print(f"{test.__name__}: ", end="")
+        test()
+
 if __name__ == "__main__":
     main()
+    #run_tests()

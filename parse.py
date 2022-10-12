@@ -3,6 +3,10 @@
 input:  assumes valid html tag, starting with "<" and ending with ">"
 """
 import html_defs
+from collections import namedtuple
+
+ParsedToken = namedtuple("ParsedToken", ["token", "token_type"])
+
 
 def is_operator(token):
     return token in html_defs.OPERATORS
@@ -13,22 +17,31 @@ def is_whitespace(token):
 
 def parse_line(token_line):
     info = []
+    types = []
     tag = []
-    in_tag = False
+
     for token in token_line:
         if token == html_defs.START_TAG:
             if tag:
-                info.append(tag)
+                info.append(''.join(tag))
+                types.append(html_defs.L_TEXT)
                 tag = []
             tag.append(token)
-            in_tag = True
         elif token == html_defs.END_TAG:
             tag.append(token)
-            info.append(parse_tag_list(tag))
-            in_tag = False
+            tag_content, tag_type = parse_tag_list(tag)
+            info.extend(tag_content)
+            types.extend(tag_type)
+            tag = []
         else:
             tag.append(token)
-    return info
+
+    if (len(info) != len(types)):
+        raise Exception ("There is a error in the logic here somewhere")
+    if (html_defs.L_UNKOWN in types):
+        raise Exception ("Unknown type in types list")
+
+    return  [ParsedToken(tok, typ) for tok, typ in zip(info, types)]
 
 
 def parse_tag_list(tag_token):
@@ -66,6 +79,7 @@ def parse_tag_list(tag_token):
             end = token
             collapsed_attribute_name = [token]
             i += 1
+            # while loop has no bounds check as the tag is guaranteed to be properly formed
             while tag_token[i] != end:
                 collapsed_attribute_name.append(tag_token[i])
                 i += 1
@@ -79,24 +93,21 @@ def parse_tag_list(tag_token):
 
         i += 1
 
-
-    print(f"content {content}")
-    print(f"types {types}")
-
     if (len(types) != len(content)):
         raise Exception ("There is a error in the logic here somewhere")
     if (html_defs.L_UNKOWN in types):
         raise Exception ("Unknown type in types list")
 
-    return types
+    return content, types
 
 
 
 def test():
 
     sample_one = ['<', 'a', ' ', 'href', '=', '"', 'https:', '/', '/', 'www.w3schools.com', '"', '>', 'Visit', ' ', 'W3Schools', '<', '/', 'a', '>']
-    print(sample_one)
-    parse_line(sample_one)
+    line = (parse_line(sample_one))
+    for entry in line:
+        print(entry)
 
 
 
