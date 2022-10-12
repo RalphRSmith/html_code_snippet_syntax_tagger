@@ -31,6 +31,8 @@ L_WHITESPACE      = "w"
 L_UNKOWN          = "X"
 
 OPERATORS   = set("<>/=")
-WHITESPACE  = set(" ")              # add support for tab
+WHITESPACE  = set("     ")              # add support for tab
 QUOTES      = set(["'"] + ['"'])
+
+COMMENT_START = "!--"               # after a start_tag
 

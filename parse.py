@@ -9,13 +9,18 @@ ParsedToken = namedtuple("ParsedToken", ["token", "token_type"])
 
 
 def is_operator(token):
+    """returns true if the token is an HTML operator"""
     return token in html_defs.OPERATORS
 
 def is_whitespace(token):
+    """returns true if the token is a whitespace character"""
     return token in html_defs.WHITESPACE
 
 
 def parse_line(token_line):
+    """Parses a list of tokens
+
+    returns the line as a list of parsedToken named tuples"""
     info = []
     types = []
     tag = []
@@ -29,7 +34,10 @@ def parse_line(token_line):
             tag.append(token)
         elif token == html_defs.END_TAG:
             tag.append(token)
-            tag_content, tag_type = parse_tag_list(tag)
+            if len(tag) > 1 and tag[1] == html_defs.COMMENT_START:
+                tag_content, tag_type = parse_comment_list(tag)
+            else:
+                tag_content, tag_type = parse_tag_list(tag)
             info.extend(tag_content)
             types.extend(tag_type)
             tag = []
@@ -42,6 +50,15 @@ def parse_line(token_line):
         raise Exception ("Unknown type in types list")
 
     return  [ParsedToken(tok, typ) for tok, typ in zip(info, types)]
+
+
+def parse_comment_list(tag_token):
+    """parses a comment line"""
+    content = ["".join(tag_token[:])]
+    types = [html_defs.L_COMMENT]
+
+    return content, types
+
 
 
 def parse_tag_list(tag_token):
