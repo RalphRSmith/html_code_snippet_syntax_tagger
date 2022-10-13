@@ -1,17 +1,22 @@
 '''
 A module to tokenize html
 '''
-from typing import List, Type, Any
+from typing import List
 import d_stack
 import html_defs
 
 DEBUG = False
 
-def tokenize(lines: Type[List[Any]]) -> List[Any]:
+def tokenize(lines: List[str]) -> List[List[str]]:
     '''Takes in a list of lines : str, returns a list of line tokens'''
-    tokens = []  # will hold the line_tokens
+    # declaration of type
+    tokens : List[List[str]]
+    line_tokens : List[str]
+    working : str
+
+    tokens = []
     for i, line in enumerate(lines):
-        line_tokens = list()
+        line_tokens = []
         matched_command=d_stack.D_Stack()
         working = ""
         for j, c in enumerate(line):
@@ -21,14 +26,14 @@ def tokenize(lines: Type[List[Any]]) -> List[Any]:
                 line_tokens.append(c)
                 matched_command.pop()
                 working = ""
-            elif c in html_defs.SINGLE or c in html_defs.PAIRS.keys():
+            elif html_defs.is_binary_key_or_single(c):
                 if working:
                     line_tokens.append(working)
                 working = ""
                 line_tokens.append(c)
 
-                if c in html_defs.PAIRS.keys():
-                    matched_command.push(html_defs.PAIRS[c])
+                if html_defs.in_binary_pair_keys(c):
+                    matched_command.push(html_defs.get_binary_complement(c))
             else:
                 working += c
 
@@ -47,11 +52,14 @@ def tokenize(lines: Type[List[Any]]) -> List[Any]:
 
 
 def main():
+    """Module main for test running """
     run_tests()
 
 
 
 def run_tests():
+    """ Function to run module level tests """
+    # todo
     pass
 
 if __name__ == "__main__":

@@ -1,10 +1,13 @@
 """Module for holding all html defs and values"""
 
+# Important Constants
 START_TAG = "<"
 END_TAG = ">"
 NEWLINE = "\n"
 
-PAIRS = {
+
+# Operators
+BINARY_PAIRS = {
     START_TAG : END_TAG,
     '"' : '"',
     "'" : "'",
@@ -12,12 +15,13 @@ PAIRS = {
 
 SINGLE = set(["="," ", "/"])
 
+
 # HTML Safe Values for Conversion
 HTMLSAFE = {
-    '<' : '&lt;',
-    '>' : '&gt;',
+    START_TAG : '&lt;',
+    END_TAG : '&gt;',
     '&' : '&amp;',
-    "'" : "'", # need to locate safe entry for single quote
+    "'" : "&#34",
     '"' : '&quot;',
 }
 
@@ -32,9 +36,22 @@ L_WHITESPACE      = "w"
 L_NEWLINE         = "n"
 L_UNKOWN          = "X"
 
-
+# Some sets used for matching
 OPERATORS   = set("<>/=")
 WHITESPACE  = set("     ")              # add support for tab
 QUOTES      = set(["'"] + ['"'])
+COMMENT_START = "!--"                   # after a start_tag
 
-COMMENT_START = "!--"               # after a start_tag
+
+# Functions
+def in_binary_pair_keys(char : str) -> bool:
+    """ Returns true if char is in binary operator pairs datastructure"""
+    return char in BINARY_PAIRS
+
+def is_binary_key_or_single(char : str) -> bool:
+    """ Returns true if c (char) is in binary operator pairs or single datastructure"""
+    return (char in SINGLE or in_binary_pair_keys(char))
+
+def get_binary_complement(char : str) -> str:
+    """ Returns the value of the char key in the BINARY PAIRS datastructure"""
+    return BINARY_PAIRS[char]
