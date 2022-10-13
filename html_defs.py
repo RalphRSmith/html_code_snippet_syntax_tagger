@@ -29,7 +29,9 @@ L_ATTRIBUTE_VALUE = "av"
 L_COMMENT         = "c"
 L_TEXT            = "t"
 L_WHITESPACE      = "w"
+L_NEWLINE         = "n"
 L_UNKOWN          = "X"
+
 
 OPERATORS   = set("<>/=")
 WHITESPACE  = set("     ")              # add support for tab

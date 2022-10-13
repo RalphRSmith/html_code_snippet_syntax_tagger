@@ -5,6 +5,9 @@ input:  assumes valid html tag, starting with "<" and ending with ">"
 from collections import namedtuple
 import html_defs
 
+DEBUG = False
+
+
 ParsedToken = namedtuple("ParsedToken", ["token", "token_type"])
 
 
@@ -15,6 +18,10 @@ def is_operator(token: str):
 def is_whitespace(token: str):
     """returns true if the token is a whitespace character"""
     return token in html_defs.WHITESPACE
+
+def is_newline(token: str):
+    """returns true if the token is a newline character"""
+    return token == html_defs.NEWLINE
 
 
 def parse_line(token_line: list) -> list:
@@ -37,12 +44,22 @@ def parse_line(token_line: list) -> list:
             if len(tag) > 1 and tag[1] == html_defs.COMMENT_START:
                 tag_content, tag_type = parse_comment_list(tag)
             else:
+                if DEBUG:
+                    print(f"before calling parse_tag_list")
+                    print(f"\tinfo len{len(info)}: {info}")
+                    print(f"\ttypes len{len(types)}: {types}")
+                    print()
                 tag_content, tag_type = parse_tag_list(tag)
             info.extend(tag_content)
             types.extend(tag_type)
             tag = []
         else:
             tag.append(token)
+
+    if DEBUG:
+        print(f"info len{len(info)}: {info}")
+        print(f"types len{len(types)}: {types}")
+
 
     if (len(info) != len(types)):
         raise Exception ("There is a error in the logic here somewhere")
@@ -82,12 +99,17 @@ def parse_tag_list(tag_token):
             content.append(token)
             types.append(html_defs.L_WHITESPACE)
 
+        elif is_newline(token):
+            content.append(token)
+            types.append(html_defs.L_NEWLINE)
+
         elif i < 3 and types[-1] == html_defs.L_OP:
             content.append(token)
             types.append(html_defs.L_ELEMENT)
 
         elif i > 2 and ((types[-2] == html_defs.L_ELEMENT or types[-2] == html_defs.L_ATTRIBUTE_VALUE)
-                or (types[-1] == html_defs.L_WHITESPACE and types[-2] == html_defs.L_ATTRIBUTE_NAME)):
+                or (types[-1] == html_defs.L_WHITESPACE and types[-2] == html_defs.L_ATTRIBUTE_NAME)
+                or (types[-1] == html_defs.L_WHITESPACE and is_operator(tag_token[i+1]))):
             content.append(token)
             types.append(html_defs.L_ATTRIBUTE_NAME)
 
@@ -110,8 +132,14 @@ def parse_tag_list(tag_token):
 
         i += 1
 
+    if DEBUG:
+        print(f"in parse tag list")
+        print(f"info len {len(content)}: {content}")
+        print(f"types len {len(types)}: {types}")
+        print()
+
     if (len(types) != len(content)):
-        raise Exception ("There is a error in the logic here somewhere")
+        raise Exception ("There is a error in the logic here somewhere --")
     if (html_defs.L_UNKOWN in types):
         raise Exception ("Unknown type in types list")
 
@@ -120,11 +148,7 @@ def parse_tag_list(tag_token):
 
 def process(token_lines):
     """Takes a line of tokens, returns parsed html"""
-    p_lines = []
-    for line in token_lines:
-        p_lines.append(parse_line(line))
-
-    return p_lines
+    return parse_line(token_lines[0])
 
 
 def test():
@@ -138,7 +162,7 @@ def test():
 
 def main():
     print("in main")
-    test()
+    #test()
 
 
 if __name__ == "__main__":

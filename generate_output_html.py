@@ -15,19 +15,15 @@ def get_safe_html_char(token):
         return token
 
 
-def cleanse_and_style_tag(parsed_token_lines):
+def cleanse_and_style_tag(parsed_tokens):
     """Takes a list of parsed token named tuples and returns a list of line strings"""
     cleansed = [f"<pre><code>"]
 
-    for line in parsed_token_lines:
-        cleansed_line = []
-        for entry in line:
-            cleansed_line.append(label(get_safe_html_char(entry.token), entry.token_type))
-        cleansed_line.append(html_defs.NEWLINE)
-        cleansed.append("".join(cleansed_line))
+    for tok in parsed_tokens:
+        cleansed.append(label(get_safe_html_char(tok.token), tok.token_type))
+
     cleansed.append("</code></pre>")
     return "".join(cleansed)
-
 
 
 

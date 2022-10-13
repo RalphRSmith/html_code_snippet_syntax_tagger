@@ -12,14 +12,10 @@ DEBUG = False
 
 def load_code(code_file: str):
     '''Loads a code file'''
-    lines = list()  # holds all the lines
-    l = list()      # holds a single lines
-    with open(code_file, mode="r", encoding="UTF-8" ) as f:
-        l = f.readline()
-        while l:
-            lines.append(l.rstrip())
-            l = f.readline()
-    return lines
+    with open(code_file, mode="r", encoding="UTF-8" ) as infile:
+        lines = infile.read()
+
+    return [lines]
 
 
 def save_code(code: str, out_name: str):
@@ -34,27 +30,25 @@ def program(file_name : str):
     lines = load_code(file_name)
     if DEBUG:
         print("LINES")
-        for line in lines:
-            print(f"Line: {line}")
+        print(lines)
         print()
+
 
     tokens = html_tokenize.tokenize(lines)
     if DEBUG:
-        print("TOKENS")
+        print(f"The lenth of TOKENS is {len(tokens)}")
         for line in tokens:
             print(f"tokens: {line}")
-            print(F"joined: {''.join(line)}")
+            print()
+            print(F"joined:\n{''.join(line)}")
             print()
 
 
     parsed = parse.process(tokens)
     if DEBUG:
         print("PARSED")
-        for i, line in enumerate(parsed):
-            print(f"Line {i + 1}")
-            for entry in line:
-                print(f"{entry.token_type:2} : '{entry.token}'")
-            print()
+        print(parsed)
+
 
     html_code = generate_output_html.cleanse_and_style_tag(parsed)
     if DEBUG:
@@ -62,6 +56,7 @@ def program(file_name : str):
         print(html_code)
 
     save_code(html_code, f"output_{file_name}")
+
 
 
 def main():
