@@ -1,20 +1,35 @@
 """Module to get filename from commandline"""
 
-from optparse import OptionParser
+import argparse
+import os.path
 
-parser = OptionParser()
+parser = argparse.ArgumentParser(
+        prog="main.py",
+        description="generate styled html code-block from raw html",
+        usage="%(prog)s [option] path")
 
-parser.add_option("-f", "--file",
-                    help="specify html file to convert")
+parser.add_argument('-f', "--file",
+                    type=str,
+                    help="specify filename of raw-html")
 
-parser.add_option("-o", "--outfile",
-                    help="specify filename for output, if no output name specified, output will go to standard out")
+parser.add_argument('-o', "--outfile",
+                    type=str,
+                    help="specify output filename, if none specified, output goes to std out")
+
+args = parser.parse_args()
+
+# validate infile arguments
+if not args.file:
+    parser.error("raw-html filename missing.  Usage: python main.py -f <filename>")
+
+f_name, f_extension = os.path.splitext(args.file)
+
+if not os.path.exists(args.file):
+    parser.error("input filename cannot be found")
+
+if f_extension not in [".html", ".txt"]:
+    parser.error("please pass a .html or .txt files")
 
 
-(cli_options, cli_args) = parser.parse_args()
-
-if not cli_options.file:
-    parser.error("please specify a file to convert with the -f or --file flag")
-
-print(options)
+print("made past checks")
 print(args)
