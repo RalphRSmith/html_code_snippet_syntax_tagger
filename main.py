@@ -7,7 +7,7 @@ import html_tokenize
 import parse
 import generate_output_html
 
-DEBUG = False
+DEBUG = True
 
 
 def load_code(code_file: str):
