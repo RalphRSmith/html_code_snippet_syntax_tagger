@@ -1,13 +1,13 @@
 '''
 A module to tokenize html
 '''
+from typing import List, Type, Any
 import d_stack
-import parse
 import html_defs
 
 DEBUG = False
 
-def tokenize(lines: list):
+def tokenize(lines: Type[List[Any]]) -> List[Any]:
     '''Takes in a list of lines : str, returns a list of line tokens'''
     tokens = []  # will hold the line_tokens
     for i, line in enumerate(lines):
@@ -21,14 +21,14 @@ def tokenize(lines: list):
                 line_tokens.append(c)
                 matched_command.pop()
                 working = ""
-            elif c in html_defs._SINGLE or c in html_defs._PAIRS.keys():
+            elif c in html_defs.SINGLE or c in html_defs.PAIRS.keys():
                 if working:
                     line_tokens.append(working)
                 working = ""
                 line_tokens.append(c)
 
-                if c in html_defs._PAIRS.keys():
-                    matched_command.push(html_defs._PAIRS[c])
+                if c in html_defs.PAIRS.keys():
+                    matched_command.push(html_defs.PAIRS[c])
             else:
                 working += c
 
@@ -47,38 +47,12 @@ def tokenize(lines: list):
 
 
 def main():
-    '''Run a test'''
-    code_filename="html_to_convert.html"
-    program(code_filename)
+    run_tests()
 
 
 
 def run_tests():
-    """Test runner for highlight module"""
-
-    PASSED = "passed"
-    FAILED = "*** failed ***"
-
-    # define tests
-    def test_label():
-        s = "abcd"
-        t = "name"
-
-        try:
-            r = label(s, t)
-            assert(r == f"<span class='{t}'>{s}</span>")
-            print(PASSED)
-        except assertionError:
-            print(FAILED)
-
-    # invoke tests
-    print("Running tests")
-    print("-" * 13)
-    tests = [test_label]
-    for test in tests:
-        print(f"{test.__name__}: ", end="")
-        test()
+    pass
 
 if __name__ == "__main__":
     main()
-    #run_tests()

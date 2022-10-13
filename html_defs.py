@@ -2,17 +2,18 @@
 
 START_TAG = "<"
 END_TAG = ">"
+NEWLINE = "\n"
 
-_PAIRS = {
+PAIRS = {
     START_TAG : END_TAG,
     '"' : '"',
     "'" : "'",
 }
 
-_SINGLE = set(["="," ", "/"])
+SINGLE = set(["="," ", "/"])
 
 # HTML Safe Values for Conversion
-_HTMLSAFE = {
+HTMLSAFE = {
     '<' : '&lt;',
     '>' : '&gt;',
     '&' : '&amp;',
@@ -35,4 +36,3 @@ WHITESPACE  = set("     ")              # add support for tab
 QUOTES      = set(["'"] + ['"'])
 
 COMMENT_START = "!--"               # after a start_tag
-

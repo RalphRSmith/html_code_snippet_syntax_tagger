@@ -2,22 +2,22 @@
 
 input:  assumes valid html tag, starting with "<" and ending with ">"
 """
-import html_defs
 from collections import namedtuple
+import html_defs
 
 ParsedToken = namedtuple("ParsedToken", ["token", "token_type"])
 
 
-def is_operator(token):
+def is_operator(token: str):
     """returns true if the token is an HTML operator"""
     return token in html_defs.OPERATORS
 
-def is_whitespace(token):
+def is_whitespace(token: str):
     """returns true if the token is a whitespace character"""
     return token in html_defs.WHITESPACE
 
 
-def parse_line(token_line):
+def parse_line(token_line: list) -> list:
     """Parses a list of tokens
 
     returns the line as a list of parsedToken named tuples"""
