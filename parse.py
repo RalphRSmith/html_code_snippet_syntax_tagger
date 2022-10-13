@@ -118,6 +118,14 @@ def parse_tag_list(tag_token):
     return content, types
 
 
+def process(token_lines):
+    """Takes a line of tokens, returns parsed html"""
+    p_lines = []
+    for line in token_lines:
+        p_lines.append(parse_line(line))
+
+    return p_lines
+
 
 def test():
 

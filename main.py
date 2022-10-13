@@ -3,7 +3,7 @@ A module to generate display code for my website
 input: a file containing properly formatted html
 output: a file with css tags added
 '''
-DEBUG = False
+DEBUG = True
 
 import d_stack
 import html_defs
@@ -24,16 +24,21 @@ def load_code(code_file: str):
     return lines
 
 
+def save_code(code, out_name: str):
+    """Writes code to a file"""
 
 
 def program(file_name):
     lines = load_code(file_name)
+    if DEBUG:
+        print("LINES")
+        for line in lines:
+            print(f"Line: {line}")
+        print()
 
     tokens = html_tokenize.tokenize(lines)
-
-    #print(f"tokens {tokens}")
-
     if DEBUG:
+        print("TOKENS")
         for line in tokens:
             print(f"tokens: {line}")
             print(F"joined: {''.join(line)}")
@@ -41,7 +46,18 @@ def program(file_name):
 
 
     parsed = parse.process(tokens)
+    if DEBUG:
+        print("PARSED")
+        for i, line in enumerate(parsed):
+            print(f"Line {i + 1}")
+            for entry in line:
+                print(f"{entry.token_type:2} : '{entry.token}'")
+            print()
 
+    html_code = generate_output_html.cleanse_and_style_tag(parsed)
+    if DEBUG:
+        print("HTML_LINES")
+        print(html_code)
 
 
 
