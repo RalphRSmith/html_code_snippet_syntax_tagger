@@ -3,7 +3,9 @@ A module to generate display code for my website
 input: a file containing properly formatted html
 output: a file with css tags added
 '''
-from typing import List
+from typing import List, Optional
+import argparse
+import os.path
 import html_tokenize
 import parse
 import generate_output_html
@@ -27,7 +29,7 @@ def save_code(code: str, out_name: str) -> None:
 
 
 
-def program(file_name : str) -> None:
+def program(file_name : str, out_file_name: Optional[str] = None) -> None:
     """Runs the procedures to generate html output"""
     lines = load_code(file_name)
     if DEBUG:
@@ -57,15 +59,45 @@ def program(file_name : str) -> None:
         print("HTML_LINES")
         print(html_code)
 
-    print(html_code)
-    save_code(html_code, f"output_{file_name}")
+    # save or send to standard out
+    if out_file_name:
+        save_code(html_code, out_file_name)
+    else:
+        print(html_code)
 
 
 
 def main():
-    '''Run a test'''
-    code_filename="html_to_convert.html"
-    program(code_filename)
+    ''' Function to drive the Program '''
+    parser = argparse.ArgumentParser(
+        prog="main.py",
+        description="generate styled html code-block from raw html",
+        usage="%(prog)s [option] path")
+
+    parser.add_argument('-f', "--file",
+                        type=str,
+                        help="specify filename of raw-html")
+
+    parser.add_argument('-o', "--outfile",
+                        type=str,
+                        help="specify output filename, if none specified, output goes to std out")
+
+    args = parser.parse_args()
+
+    # validate infile arguments
+    if not args.file:
+        parser.error("raw-html filename missing.  Usage: python main.py -f <filename>")
+
+    _, f_extension = os.path.splitext(args.file)
+
+    if not os.path.exists(args.file):
+        parser.error("input filename cannot be found")
+
+    if f_extension not in [".html", ".txt"]:
+        parser.error("please pass a .html or .txt files")
+
+
+    program(args.file, args.outfile)
 
 
 if __name__ == "__main__":
