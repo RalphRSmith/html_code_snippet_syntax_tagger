@@ -5,7 +5,7 @@ input:  assumes valid html tag, starting with "<" and ending with ">"
 from collections import namedtuple
 import html_defs
 
-DEBUG = True
+DEBUG = False
 
 
 ParsedToken = namedtuple("ParsedToken", ["token", "token_type"])

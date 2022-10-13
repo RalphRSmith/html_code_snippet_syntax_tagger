@@ -7,7 +7,7 @@ import html_tokenize
 import parse
 import generate_output_html
 
-DEBUG = True
+DEBUG = False
 
 
 def load_code(code_file: str):
@@ -50,7 +50,7 @@ def program(file_name : str):
         print(parsed)
 
 
-    html_code = generate_output_html.cleanse_and_style_tag(parsed)
+    html_code = generate_output_html.generate(parsed)
     if DEBUG:
         print("HTML_LINES")
         print(html_code)

@@ -20,10 +20,28 @@ def cleanse_and_style_tag(parsed_tokens):
     cleansed = [f"<pre><code>"]
 
     for tok in parsed_tokens:
-        cleansed.append(label(get_safe_html_char(tok.token), tok.token_type))
+        if html_defs.NEWLINE in tok.token:
+            parts = tok.token.split(html_defs.NEWLINE)
+            labeled = [label(x, tok.token_type) for x in parts]
+            cleansed.append("\n".join(labeled))
+        else:
+            cleansed.append(label(get_safe_html_char(tok.token), tok.token_type))
 
     cleansed.append("</code></pre>")
     return "".join(cleansed)
+
+
+def fix_newlines(parsed_tokens):
+    """ fixes newlines """
+    for i, entry in enumerate(parsed_tokens):
+        if html_defs.NEWLINE in entry.token:
+            print(i, entry.token.split(html_defs.NEWLINE))
+
+    return parsed_tokens
+
+
+def generate(parsed_tokens):
+    return cleanse_and_style_tag(parsed_tokens)
 
 
 
