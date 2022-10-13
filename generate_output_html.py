@@ -25,7 +25,13 @@ def cleanse_and_style_tag(parsed_tokens):
             labeled = [label(x, tok.token_type) for x in parts]
             cleansed.append("\n".join(labeled))
         else:
-            cleansed.append(label(get_safe_html_char(tok.token), tok.token_type))
+            token, t_type = tok.token, tok.token_type
+            to_check = [html_defs.START_TAG, html_defs.END_TAG]
+            for tag in to_check:
+                if tag in token:
+                    token = token.replace(tag, html_defs.HTMLSAFE[tag])
+
+            cleansed.append(label(get_safe_html_char(token), t_type))
 
     cleansed.append("</code></pre>")
     return "".join(cleansed)
