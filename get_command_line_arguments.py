@@ -1,4 +1,4 @@
-"""Module to get filename from commandline"""
+"""Module to test command line arg parsing. Note: this module is not used in the program"""
 
 import argparse
 import os.path
