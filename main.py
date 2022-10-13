@@ -3,20 +3,18 @@ A module to generate display code for my website
 input: a file containing properly formatted html
 output: a file with css tags added
 '''
-DEBUG = True
-
-import d_stack
-import html_defs
 import html_tokenize
 import parse
 import generate_output_html
+
+DEBUG = True
 
 
 def load_code(code_file: str):
     '''Loads a code file'''
     lines = list()  # holds all the lines
     l = list()      # holds a single lines
-    with open(code_file, "r") as f:
+    with open(code_file, mode="r", encoding="UTF-8" ) as f:
         l = f.readline()
         while l:
             lines.append(l.rstrip())
@@ -24,11 +22,12 @@ def load_code(code_file: str):
     return lines
 
 
-def save_code(code, out_name: str):
+def save_code(code: str, out_name: str):
     """Writes code to a file"""
 
 
-def program(file_name):
+def program(file_name : str):
+    """Runs the procedures to generate html output"""
     lines = load_code(file_name)
     if DEBUG:
         print("LINES")
@@ -60,39 +59,11 @@ def program(file_name):
         print(html_code)
 
 
-
 def main():
     '''Run a test'''
     code_filename="html_to_convert.html"
     program(code_filename)
 
-
-
-def run_tests():
-    """Test runner for highlight module"""
-
-    PASSED = "passed"
-    FAILED = "*** failed ***"
-
-    # define tests
-    def test_label():
-        s = "abcd"
-        t = "name"
-
-        try:
-            r = label(s, t)
-            assert(r == f"<span class='{t}'>{s}</span>")
-            print(PASSED)
-        except assertionError:
-            print(FAILED)
-
-    # invoke tests
-    print("Running tests")
-    print("-" * 13)
-    tests = [test_label]
-    for test in tests:
-        print(f"{test.__name__}: ", end="")
-        test()
 
 if __name__ == "__main__":
     main()
