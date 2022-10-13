@@ -7,7 +7,7 @@ import html_tokenize
 import parse
 import generate_output_html
 
-DEBUG = True
+DEBUG = False
 
 
 def load_code(code_file: str):
@@ -24,6 +24,9 @@ def load_code(code_file: str):
 
 def save_code(code: str, out_name: str):
     """Writes code to a file"""
+    with open(out_name, mode="w", encoding="UTF-8") as f:
+        f.write(code)
+
 
 
 def program(file_name : str):
@@ -57,6 +60,8 @@ def program(file_name : str):
     if DEBUG:
         print("HTML_LINES")
         print(html_code)
+
+    save_code(html_code, f"output_{file_name}")
 
 
 def main():
