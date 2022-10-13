@@ -1,23 +1,28 @@
 """A module to generate the output html"""
 
+from typing import List
 import html_defs
+import parse
 
-def label(substring : str, type : str):
+def label(substring : str, substring_type : str):
     """ Wraps the substring in an html span of class <type>"""
-    return f"<span class='{type}'>{substring}</span>"
+    return f"<span class='{substring_type}'>{substring}</span>"
 
 
-def get_safe_html_char(token):
+def get_safe_html_char(token : str) -> str:
     """Returns a safe dict"""
-    if token in html_defs.HTMLSAFE:
-        return html_defs.HTMLSAFE[token]
-    else:
-        return token
+    if html_defs.should_escape(token):
+        return html_defs.escape(token)
+    return token
 
 
-def cleanse_and_style_tag(parsed_tokens):
-    """Takes a list of parsed token named tuples and returns a list of line strings"""
-    cleansed = [f"<pre><code>"]
+def generate(parsed_tokens : List[parse.ParsedToken]) -> str:
+    """Takes a list of parsed token named returns sanitized and labeled html"""
+    tok:    parse.ParsedToken
+    token:  str
+    t_type: str
+
+    cleansed = ["<pre><code>"]
 
     for tok in parsed_tokens:
         if html_defs.NEWLINE in tok.token:
@@ -26,10 +31,11 @@ def cleanse_and_style_tag(parsed_tokens):
             cleansed.append("\n".join(labeled))
         else:
             token, t_type = tok.token, tok.token_type
+
             to_check = [html_defs.START_TAG, html_defs.END_TAG]
             for tag in to_check:
                 if tag in token:
-                    token = token.replace(tag, html_defs.HTMLSAFE[tag])
+                    token = token.replace(tag, html_defs.escape(tag))
 
             cleansed.append(label(get_safe_html_char(token), t_type))
 
@@ -37,21 +43,8 @@ def cleanse_and_style_tag(parsed_tokens):
     return "".join(cleansed)
 
 
-def fix_newlines(parsed_tokens):
-    """ fixes newlines """
-    for i, entry in enumerate(parsed_tokens):
-        if html_defs.NEWLINE in entry.token:
-            print(i, entry.token.split(html_defs.NEWLINE))
-
-    return parsed_tokens
-
-
-def generate(parsed_tokens):
-    return cleanse_and_style_tag(parsed_tokens)
-
-
-
 def main():
+    """ Invoked when module is run """
     run_tests()
 
 
@@ -68,32 +61,31 @@ def run_tests():
         type1 = "Q"
 
         try:
-            v1 = label(sub1, type1)
-            assert (v1 == f"<span class='{type1}'>{sub1}</span>")
+            test_label = label(sub1, type1)
+            assert test_label == f"<span class='{type1}'>{sub1}</span>"
             print(PASSED)
-        except assertionError:
+        except AssertionError:
             print(FAILED)
 
 
     def test_two():
         """check if chars are properly escaped"""
         try:
-            T = html_defs.START_TAG
-            assert(get_safe_html_char(T) == html_defs.HTMLSAFE[T]) # must be escaped
-            assert(get_safe_html_char("s") == "s")                  # s char - no need to escape
+            start = html_defs.START_TAG
+            assert get_safe_html_char(start) == html_defs.escape(start)  # must be escaped
+            assert get_safe_html_char("s") == "s"                  # s char - no need to escape
             print(PASSED)
-        except assertionError:
+        except AssertionError:
             print(FAILED)
 
 
     # invoke tests
-    print("Running tests")
-    print("-" * 13)
+    print(f"\nRunning {__file__} tests")
+    print("-" * (14 + len(__file__)))
     tests = [test_one, test_two]
     for test in tests:
         print(f"{test.__name__}: ", end="")
         test()
-
 
 
 if __name__ == "__main__":

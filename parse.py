@@ -2,13 +2,17 @@
 
 input:  assumes valid html tag, starting with "<" and ending with ">"
 """
-from collections import namedtuple
+from dataclasses import dataclass
+from typing import List, Tuple
 import html_defs
 
 DEBUG = False
 
-
-ParsedToken = namedtuple("ParsedToken", ["token", "token_type"])
+@dataclass
+class ParsedToken:
+    """  a token, type dataclass """
+    token: str
+    token_type: str
 
 
 def is_operator(token: str):
@@ -24,10 +28,14 @@ def is_newline(token: str):
     return token == html_defs.NEWLINE
 
 
-def parse_line(token_line: list) -> list:
+def parse_line(token_line: List[str]) -> List[ParsedToken]:
     """Parses a list of tokens
 
-    returns the line as a list of parsedToken named tuples"""
+    returns the line as a list of parsedToken dataclass tuples"""
+    info: List[str]
+    types: List[str]
+    tag: List[str]
+
     info = []
     types = []
     tag = []
@@ -45,7 +53,7 @@ def parse_line(token_line: list) -> list:
                 tag_content, tag_type = parse_comment_list(tag)
             else:
                 if DEBUG:
-                    print(f"before calling parse_tag_list")
+                    print("before calling parse_tag_list")
                     print(f"\tinfo len{len(info)}: {info}")
                     print(f"\ttypes len{len(types)}: {types}")
                     print()
@@ -61,16 +69,20 @@ def parse_line(token_line: list) -> list:
         print(f"types len{len(types)}: {types}")
 
 
-    if (len(info) != len(types)):
-        raise Exception ("There is a error in the logic here somewhere")
-    if (html_defs.L_UNKOWN in types):
+    if len(info) != len(types):
+        raise Exception ("Error -> len(info) != len(types)")
+    if html_defs.L_UNKOWN in types:
         raise Exception ("Unknown type in types list")
 
     return  [ParsedToken(tok, typ) for tok, typ in zip(info, types)]
 
 
-def parse_comment_list(tag_token):
+def parse_comment_list(tag_token: List[str]) -> Tuple[List[str], List[str]]:
     """parses a comment line"""
+    content: List[str]
+    types:   List[str]
+
+
     content = ["".join(tag_token[:])]
     types = [html_defs.L_COMMENT]
 
@@ -78,11 +90,15 @@ def parse_comment_list(tag_token):
 
 
 
-def parse_tag_list(tag_token):
+def parse_tag_list(tag_token: List[str]) -> Tuple[List[str], List[str]]:
     """returns a parsed tag
 
     input:  a valid html tag with opening and closing brackets
     """
+    content: List[str]
+    types:   List[str]
+
+
     content = []
     types = []
 
@@ -107,7 +123,8 @@ def parse_tag_list(tag_token):
             content.append(token)
             types.append(html_defs.L_ELEMENT)
 
-        elif i > 2 and ((types[-2] == html_defs.L_ELEMENT or types[-2] == html_defs.L_ATTRIBUTE_VALUE)
+        elif i > 2 and ((types[-2] == html_defs.L_ELEMENT
+                            or types[-2] == html_defs.L_ATTRIBUTE_VALUE)
                 or (types[-1] == html_defs.L_WHITESPACE and types[-2] == html_defs.L_ATTRIBUTE_NAME)
                 or (types[-1] == html_defs.L_WHITESPACE and is_operator(tag_token[i+1]))):
             content.append(token)
@@ -133,36 +150,60 @@ def parse_tag_list(tag_token):
         i += 1
 
     if DEBUG:
-        print(f"in parse tag list")
+        print("in parse tag list")
         print(f"info len {len(content)}: {content}")
         print(f"types len {len(types)}: {types}")
         print()
 
-    if (len(types) != len(content)):
-        raise Exception ("There is a error in the logic here somewhere --")
-    if (html_defs.L_UNKOWN in types):
+    if len(types) != len(content):
+        raise Exception("Error -> len(content) != len(types)")
+    if html_defs.L_UNKOWN in types:
         raise Exception ("Unknown type in types list")
 
     return content, types
 
 
-def process(token_lines):
+def process(token_lines: List[List[str]]) -> List[ParsedToken]:
     """Takes a line of tokens, returns parsed html"""
     return parse_line(token_lines[0])
 
 
-def test():
+def run_tests():
+    """ Runs a simple test"""
 
-    sample_one = ['<', 'a', ' ', 'href', '=', '"', 'https:', '/', '/', 'www.w3schools.com', '"', '>', 'Visit', ' ', 'W3Schools', '<', '/', 'a', '>']
-    line = (parse_line(sample_one))
-    for entry in line:
-        print(entry)
+    def test_one():
+        sample_one = ['<', 'a', ' ', 'href', '=', '"', 'https:', '/', '/',
+                    'www.w3schools.com', '"', '>', 'Visit', ' ', 'W3Schools', '<', '/', 'a', '>']
 
+        test_parse_line = (parse_line(sample_one))
+
+        solution = [ParsedToken(token='<', token_type='o'), ParsedToken(token='a', token_type='e'),
+        ParsedToken(token=' ', token_type='w'), ParsedToken(token='href', token_type='an'),
+        ParsedToken(token='=', token_type='o'),
+        ParsedToken(token='"https://www.w3schools.com"', token_type='av'),
+        ParsedToken(token='>', token_type='o'),
+        ParsedToken(token='Visit W3Schools', token_type='t'),
+        ParsedToken(token='<', token_type='o'), ParsedToken(token='/', token_type='o'),
+        ParsedToken(token='a', token_type='e'), ParsedToken(token='>', token_type='o')]
+
+        try:
+            assert test_parse_line == solution
+            print("passed")
+        except AssertionError:
+            print("*** failed ***")
+
+    # invoke tests
+    print(f"\nRunning {__file__} tests")
+    print("-" * (14 + len(__file__)))
+    tests = [test_one]
+    for test in tests:
+        print(f"{test.__name__}: ", end="")
+        test()
 
 
 def main():
-    print("in main")
-    #test()
+    """ main function to run module tests """
+    run_tests()
 
 
 if __name__ == "__main__":

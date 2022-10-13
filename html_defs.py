@@ -55,3 +55,11 @@ def is_binary_key_or_single(char : str) -> bool:
 def get_binary_complement(char : str) -> str:
     """ Returns the value of the char key in the BINARY PAIRS datastructure"""
     return BINARY_PAIRS[char]
+
+def should_escape(token : str) -> bool:
+    """returns true if the token should be escaped"""
+    return token in HTMLSAFE
+
+def escape(char : str) -> str:
+    """ escapes the current char with an html safe value"""
+    return HTMLSAFE[char]

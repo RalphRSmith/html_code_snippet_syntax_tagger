@@ -3,14 +3,16 @@ A module to generate display code for my website
 input: a file containing properly formatted html
 output: a file with css tags added
 '''
+from typing import List
 import html_tokenize
 import parse
 import generate_output_html
 
+
 DEBUG = False
 
 
-def load_code(code_file: str):
+def load_code(code_file: str) -> List[str]:
     '''Loads a code file'''
     with open(code_file, mode="r", encoding="UTF-8" ) as infile:
         lines = infile.read()
@@ -18,14 +20,14 @@ def load_code(code_file: str):
     return [lines]
 
 
-def save_code(code: str, out_name: str):
+def save_code(code: str, out_name: str) -> None:
     """Writes code to a file"""
-    with open(out_name, mode="w", encoding="UTF-8") as f:
-        f.write(code)
+    with open(out_name, mode="w", encoding="UTF-8") as outfile:
+        outfile.write(code)
 
 
 
-def program(file_name : str):
+def program(file_name : str) -> None:
     """Runs the procedures to generate html output"""
     lines = load_code(file_name)
     if DEBUG:
@@ -55,6 +57,7 @@ def program(file_name : str):
         print("HTML_LINES")
         print(html_code)
 
+    print(html_code)
     save_code(html_code, f"output_{file_name}")
 
 
