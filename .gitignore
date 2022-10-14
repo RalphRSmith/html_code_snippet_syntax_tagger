@@ -3,3 +3,4 @@ env
 *.txt
 !requirements.txt
 __pycache__
+!/samples/*.html
