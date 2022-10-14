@@ -67,7 +67,7 @@ The basic steps are:
 
 3. Outputs html with each token type wrapped in it's own span with class token type
 
-|token type | coresponding labeled css class|
+|language token type | coresponding labeled css class|
 |---|---|
 |Operator|o|
 |Element | e |

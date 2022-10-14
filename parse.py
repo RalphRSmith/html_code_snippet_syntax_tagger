@@ -1,4 +1,4 @@
-"""Module for parsing html tags
+"""Module for parsing html tokens
 
 input:  assumes valid html tag, starting with "<" and ending with ">"
 """
@@ -19,9 +19,11 @@ def is_operator(token: str):
     """returns true if the token is an HTML operator"""
     return token in html_defs.OPERATORS
 
+
 def is_whitespace(token: str):
     """returns true if the token is a whitespace character"""
     return token in html_defs.WHITESPACE
+
 
 def is_newline(token: str):
     """returns true if the token is a newline character"""
@@ -31,7 +33,7 @@ def is_newline(token: str):
 def parse_line(token_line: List[str]) -> List[ParsedToken]:
     """Parses a list of tokens
 
-    returns the line as a list of parsedToken dataclass tuples"""
+    returns the line as a list of ParsedToken dataclass tuples"""
     info: List[str]
     types: List[str]
     tag: List[str]
@@ -82,12 +84,10 @@ def parse_comment_list(tag_token: List[str]) -> Tuple[List[str], List[str]]:
     content: List[str]
     types:   List[str]
 
-
     content = ["".join(tag_token[:])]
     types = [html_defs.L_COMMENT]
 
     return content, types
-
 
 
 def parse_tag_list(tag_token: List[str]) -> Tuple[List[str], List[str]]:
@@ -172,10 +172,11 @@ def run_tests():
     """ Runs a simple test"""
 
     def test_one():
+        # Below is an example of a token list
         sample_one = ['<', 'a', ' ', 'href', '=', '"', 'https:', '/', '/',
                     'www.w3schools.com', '"', '>', 'Visit', ' ', 'W3Schools', '<', '/', 'a', '>']
 
-        test_parse_line = (parse_line(sample_one))
+        test_parse_line = parse_line(sample_one)
 
         solution = [ParsedToken(token='<', token_type='o'), ParsedToken(token='a', token_type='e'),
         ParsedToken(token=' ', token_type='w'), ParsedToken(token='href', token_type='an'),

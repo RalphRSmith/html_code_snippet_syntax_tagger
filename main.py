@@ -1,5 +1,5 @@
-'''
-A module to generate display code for my website
+'''A module to generate formatted HTML code for web display
+
 input: a file containing properly formatted html
 output: a file with css tags added
 '''
