@@ -91,10 +91,10 @@ def main():
     _, f_extension = os.path.splitext(args.file)
 
     if not os.path.exists(args.file):
-        parser.error("input filename cannot be found")
+        parser.error("input file cannot be found")
 
     if f_extension not in [".html", ".txt"]:
-        parser.error("please pass a .html or .txt files")
+        parser.error("please pass a file with the extension .html or .txt")
 
 
     program(args.file, args.outfile)
