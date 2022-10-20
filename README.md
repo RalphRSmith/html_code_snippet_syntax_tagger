@@ -65,7 +65,7 @@ The basic steps are:
 2. Syntax Anylizer
     - categorizes tokens
 
-3. Outputs html with each token type wrapped in it's own span with class token type
+3. Outputs html with each token wrapped in a span with with the class of its type
 
 |language token type | coresponding labeled css class|
 |---|---|
@@ -78,13 +78,11 @@ The basic steps are:
 |Whitespace | w |
 |Newline | n |
 
+## License
 
-## Known Issues
+GNU GPLv3
 
-1) If a comment has a ">" in its text body, the program will throw an error.  The code below will throw an error.
-```
-<-- This is a line comment <  -->
-```
+See LICENSE.txt for details
 
 
 ## Links

@@ -2,5 +2,7 @@ env
 *.html
 *.txt
 !requirements.txt
+!LICENSE.txt
 __pycache__
 !/samples/*.html
+*.DS_Store
